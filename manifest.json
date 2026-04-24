@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Switch to Last Tab",
+  "description": "Quickly switch to the last accessed tab",
+  "version": "1.0",
+  "action": {
+    "default_icon": "icon.png",
+    "default_area": "tabstrip"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "service_worker": "background.js"
+  },
+  "permissions": ["activeTab"],
+  "icons": {
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "96": "icon.png",
+    "128": "icon.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "109",
+      "id": "switch-to-last-tab@emvaized"
+    }
+  },
+   "commands": {
+    "switch-to-last-tab": {
+      "suggested_key": {
+        "default": "Alt+Q"
+      },
+      "description": "Switch to the last accessed tab"
+    }
+  }
+
+}
