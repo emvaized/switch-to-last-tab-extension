@@ -22,7 +22,9 @@ function switchToLastTab(updateIcon = true){
                     if (title === "Switch to Last Tab") {
                         chrome.action.setTitle({ title: "Switch Back to Last Tab" });
                         // chrome.action.setIcon({ path: "icon-reverse.png"});
-                        chrome.action.setBadgeText({ text: "⮣" });
+                        // chrome.action.setBadgeText({ text: "⮣" });
+                        // chrome.action.setBadgeText({ text: "→" });
+                        chrome.action.setBadgeText({ text: "🡢" });
                         chrome.action.setBadgeBackgroundColor({ color: "rgb(102, 181, 54)" });
                         chrome.action.setBadgeTextColor({ color: "white" });
                     } else {
