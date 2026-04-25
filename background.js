@@ -1,6 +1,6 @@
 let settings = {
   changeBadge: true,
-  activateOnClose: true,
+  activateOnClose: false,
 };
 
 chrome.storage.sync.get(settings, (items) => {

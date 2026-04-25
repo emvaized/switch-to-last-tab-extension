@@ -1,7 +1,7 @@
 // Load saved options
 chrome.storage.sync.get({
   changeBadge: true,
-  activateOnClose: true,
+  activateOnClose: false,
 }, (items) => {
   document.getElementById('changeBadge').checked = items.changeBadge;
   document.getElementById('activateOnClose').checked = items.activateOnClose;
