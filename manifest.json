@@ -8,7 +8,6 @@
     "default_area": "tabstrip"
   },
   "background": {
-    "scripts": ["background.js"],
     "service_worker": "background.js"
   },
   "permissions": ["activeTab", "storage"],
@@ -25,8 +24,10 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "strict_min_version": "109",
-      "id": "switch-to-last-tab@emvaized"
+      "id": "switch-to-last-tab@emvaized.dev",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
     }
   },
    "commands": {
