@@ -3,6 +3,13 @@ let settings = {
   activateOnClose: false,
 };
 
+chrome.action.onClicked.addListener(() => switchToLastTab());
+chrome.commands.onCommand.addListener((command) => {
+    if (command === "switch-to-last-tab") switchToLastTab();
+});
+chrome.tabs.onRemoved.addListener(onTabClose);
+chrome.tabs.onActivated.addListener(onTabActivated);
+
 chrome.storage.sync.get(settings, (items) => {
     settings = items;
 
@@ -10,15 +17,7 @@ chrome.storage.sync.get(settings, (items) => {
         if (changes.changeBadge) settings.changeBadge = changes.changeBadge.newValue;
         if (changes.activateOnClose) settings.activateOnClose = changes.activateOnClose.newValue;
     });
-
-    chrome.action.onClicked.addListener(() => switchToLastTab());
-    chrome.tabs.onRemoved.addListener(onTabClose);
-    chrome.tabs.onActivated.addListener(onTabActivated);
-    chrome.commands.onCommand.addListener((command) => {
-        if (command === "switch-to-last-tab") switchToLastTab();
-    })
 });
-
 
 function switchToLastTab(updateIcon = true){
     chrome.tabs.query({ currentWindow: true, active: false }, (tabs) => {
@@ -32,14 +31,10 @@ function switchToLastTab(updateIcon = true){
             chrome.tabs.update(previousTab.id, { active: true }, function(){
                 if (updateIcon && settings.changeBadge) {
                     chrome.tabs.onActivated.addListener(onTabActivated);
-                    chrome.storage.session.set({ lastActiveTabId: previousTab.id });
+                    chrome.storage.session.set({ lastKnownActiveTabId: previousTab.id });
 
                     chrome.action.getBadgeText({}, (text) => {
-                        if (text === "") {
-                            setIcon(true);
-                        } else {
-                            setIcon(false);
-                        }
+                        setIcon(text === "");
                     });
                 }
             });
@@ -54,15 +49,15 @@ function onTabActivated(activeInfo) {
         }
 
         /// delayed by windows.get to avoid race condition with onTabClose
-        chrome.storage.session.set({ lastActiveTabId: activeInfo.tabId });
+        chrome.storage.session.set({ lastKnownActiveTabId: activeInfo.tabId });
     });
 }
 
 function onTabClose(tabId, removeInfo) {
     if (removeInfo && removeInfo.isWindowClosing) return;
 
-    chrome.storage.session.get("lastActiveTabId", (data) => {
-        if (data.lastActiveTabId === tabId && settings.activateOnClose) {
+    chrome.storage.session.get("lastKnownActiveTabId", (data) => {
+        if (data.lastKnownActiveTabId === tabId && settings.activateOnClose) {
             switchToLastTab(false);
         }
     });
