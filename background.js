@@ -1,5 +1,6 @@
 let settings = {
-  changeBadge: true,
+  changeBadge: false,
+  changeIcon: true,
   activateOnClose: false,
 };
 
@@ -16,6 +17,7 @@ chrome.storage.sync.get(settings, (items) => {
     chrome.storage.onChanged.addListener((changes, namespace) => {
         if (changes.changeBadge) settings.changeBadge = changes.changeBadge.newValue;
         if (changes.activateOnClose) settings.activateOnClose = changes.activateOnClose.newValue;
+        if (changes.changeIcon) settings.changeIcon = changes.changeIcon.newValue;
     });
 });
 
@@ -27,14 +29,16 @@ function switchToLastTab(updateIcon = true){
             .reduce((latest, current) => current.lastAccessed > latest.lastAccessed ? current : latest);
 
         if (previousTab?.id) {
-            if (updateIcon && settings.changeBadge) chrome.tabs.onActivated.removeListener(onTabActivated);
+            const iconChangeAllowed = updateIcon && (settings.changeBadge || settings.changeIcon);
+            if (iconChangeAllowed) chrome.tabs.onActivated.removeListener(onTabActivated);
+
             chrome.tabs.update(previousTab.id, { active: true }, function(){
-                if (updateIcon && settings.changeBadge) {
+                if (iconChangeAllowed) {
                     chrome.tabs.onActivated.addListener(onTabActivated);
                     chrome.storage.session.set({ lastKnownActiveTabId: previousTab.id });
 
-                    chrome.action.getBadgeText({}, (text) => {
-                        setIcon(text === "");
+                    chrome.action.getTitle({}, (text) => {
+                        setIcon(text === "Switch to Last Tab");
                     });
                 }
             });
@@ -45,7 +49,7 @@ function switchToLastTab(updateIcon = true){
 function onTabActivated(activeInfo) {
     chrome.windows.get(activeInfo.windowId, { populate: false }, (window) => {
         if (window && window.type === "normal") {
-            if (settings.changeBadge) setIcon(false);
+            if (settings.changeBadge || settings.changeIcon) setIcon(false);
         }
 
         /// delayed by windows.get to avoid race condition with onTabClose
@@ -64,19 +68,20 @@ function onTabClose(tabId, removeInfo) {
     });
 }
 
-function setIcon(showBadge = true){
-    if (!settings.changeBadge) {
-        chrome.action.setTitle({ title: "Switch to Last Tab" });
-        chrome.action.setBadgeText({ text: "" });
-        return;
+function setIcon(shouldChange = true){
+    chrome.action.setTitle({ title: shouldChange ? "Switch Back to Previous Tab" : "Switch to Last Tab" });
+
+    if (settings.changeBadge) {
+        if (shouldChange){
+            chrome.action.setBadgeText({ text: "🡢" });
+            chrome.action.setBadgeBackgroundColor({ color: "rgb(102, 181, 54)" });
+            chrome.action.setBadgeTextColor({ color: "white" });
+        } else {
+            chrome.action.setBadgeText({ text: "" });
+        }
     }
-    if (showBadge) {
-        chrome.action.setTitle({ title: "Switch Back to Last Tab" });
-        chrome.action.setBadgeText({ text: "🡢" });
-        chrome.action.setBadgeBackgroundColor({ color: "rgb(102, 181, 54)" });
-        chrome.action.setBadgeTextColor({ color: "white" });
-    } else {
-        chrome.action.setTitle({ title: "Switch to Last Tab" });
-        chrome.action.setBadgeText({ text: "" });
+
+    if (settings.changeIcon) {
+        chrome.action.setIcon({ path: shouldChange ? "./icon-red.png" : "./icon.png" });
     }
 }

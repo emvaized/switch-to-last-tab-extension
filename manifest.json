@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Switch to Last Tab",
   "description": "Quickly switch to the last accessed tab",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "action": {
     "default_icon": "icon.png",
     "default_area": "tabstrip"
