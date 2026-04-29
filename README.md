@@ -5,8 +5,8 @@ Fast and lightweight extension which allows to quickly switch to last accessed t
 There are many extensions that do the same, but they use complex code, storing their own history of tabs. There's no need to reinvent the wheel, when your browser already does that.
 This extension uses minimal code and only native functions to achieve the same result. 
 
-[Chrome Web Store](https://chromewebstore.google.com/detail/switch-to-last-tab/fjlgelphlhelbgaeeaemppffmcepbjno)
-[Firefox Addons](https://addons.mozilla.org/firefox/addon/switch-to-last-tab/)
+- [Chrome Web Store](https://chromewebstore.google.com/detail/switch-to-last-tab/fjlgelphlhelbgaeeaemppffmcepbjno)
+- [Firefox Addons](https://addons.mozilla.org/firefox/addon/switch-to-last-tab/)
 
 **Features**
 - No complicated code for tab tracking, just pure and straightforward sorting on each call
