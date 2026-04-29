@@ -56,6 +56,7 @@ function onTabActivated(activeInfo) {
 function onTabClose(tabId, removeInfo) {
     if (removeInfo && removeInfo.isWindowClosing) return;
 
+    /// check if closed tab was the active tab before closing
     chrome.storage.session.get("lastKnownActiveTabId", (data) => {
         if (data.lastKnownActiveTabId === tabId && settings.activateOnClose) {
             switchToLastTab(false);
